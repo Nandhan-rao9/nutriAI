@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutritional Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .list-group-item {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+        canvas {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Nutritional Results</h1>
+
+        {% if error_message %}
+            <div class="alert alert-danger">
+                {{ error_message }}
+            </div>
+        {% endif %}
+
+        <h2>Your Nutritional Targets</h2>
+        <ul class="list-group mb-4">
+            <li class="list-group-item">Calories: {{ targets.calories }}</li>
+            <li class="list-group-item">Protein: {{ targets.protein }} g</li>
+            <li class="list-group-item">Fat: {{ targets.fat }} g</li>
+            <li class="list-group-item">Carbohydrates: {{ targets.carbohydrates }} g</li>
+            <li class="list-group-item">Calcium: {{ targets.calcium }} mg</li>
+            <li class="list-group-item">Zinc: {{ targets.zinc }} mg</li>
+            <li class="list-group-item">Vitamin C: {{ targets.vitamin_c }} mg</li>
+            <li class="list-group-item">Vitamin D: {{ targets.vitamin_d }} mcg</li>
+            <li class="list-group-item">Vitamin E: {{ targets.vitamin_e }} mg</li>
+        </ul>
+
+        <h2>Nutritional Information for Your Meals</h2>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Description</th>
+                    <th>Calories</th>
+                    <th>Protein (g)</th>
+                    <th>Carbohydrates (g)</th>
+                    <th>Fat (g)</th>
+                    <th>Calcium (mg)</th>
+                    <th>Zinc (mg)</th>
+                    <th>Vitamin A (mcg)</th>
+                    <th>Vitamin C (mg)</th>
+                    <th>Vitamin D (mcg)</th>
+                    <th>Vitamin E (mg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set total_calories = 0 %}
+                {% set total_protein = 0 %}
+                {% set total_carbohydrates = 0 %}
+                {% set total_fat = 0 %}
+                {% set total_calcium = 0 %}
+                {% set total_zinc = 0 %}
+                {% set total_vitamin_a = 0 %}
+                {% set total_vitamin_c = 0 %}
+                {% set total_vitamin_d = 0 %}
+                {% set total_vitamin_e = 0 %}
+
+                {% for nutrition in nutrition_data %}
+                    <tr>
+                        <td>{{ nutrition.description }}</td>
+                        <td>{{ nutrition.calories | float }}</td>
+                        <td>{{ nutrition.protein | float }}</td>
+                        <td>{{ nutrition.carbohydrates | float }}</td>
+                        <td>{{ nutrition.fat | float }}</td>
+                        <td>{{ nutrition.calcium | float }}</td>
+                        <td>{{ nutrition.zinc | float }}</td>
+                        <td>{{ nutrition.vitamin_a | float }}</td>
+                        <td>{{ nutrition.vitamin_c | float }}</td>
+                        <td>{{ nutrition.vitamin_d | float }}</td>
+                        <td>{{ nutrition.vitamin_e | float }}</td>
+
+                        {% set total_calories = total_calories + nutrition.calories %}
+                        {% set total_protein = total_protein + nutrition.protein %}
+                        {% set total_carbohydrates = total_carbohydrates + nutrition.carbohydrates %}
+                        {% set total_fat = total_fat + nutrition.fat %}
+                        {% set total_calcium = total_calcium + nutrition.calcium %}
+                        {% set total_zinc = total_zinc + nutrition.zinc %}
+                        {% set total_vitamin_a = total_vitamin_a + nutrition.vitamin_a %}
+                        {% set total_vitamin_c = total_vitamin_c + nutrition.vitamin_c %}
+                        {% set total_vitamin_d = total_vitamin_d + nutrition.vitamin_d %}
+                        {% set total_vitamin_e = total_vitamin_e + nutrition.vitamin_e %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="table-primary">
+                    <th>Totals</th>
+                    <th>{{ total_calories }}</th>
+                    <th>{{ total_protein }} g</th>
+                    <th>{{ total_carbohydrates }} g</th>
+                    <th>{{ total_fat }} g</th>
+                    <th>{{ total_calcium }} mg</th>
+                    <th>{{ total_zinc }} mg</th>
+                    <th>{{ total_vitamin_a }} mcg</th>
+                    <th>{{ total_vitamin_c }} mg</th>
+                    <th>{{ total_vitamin_d }} mcg</th>
+                    <th>{{ total_vitamin_e }} mg</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <canvas id="nutritionChart"></canvas>
+
+        <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        var ctx = document.getElementById('nutritionChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Calories', 'Protein', 'Carbohydrates', 'Fat'],
+                datasets: [{
+                    label: 'Nutritional Totals',
+                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    data: [{{ total_calories }}, {{ total_protein }}, {{ total_carbohydrates }}, {{ total_fat }}]
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>

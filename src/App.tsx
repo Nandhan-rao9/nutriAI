@@ -4,7 +4,7 @@ import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Chat } from './pages/Chat';
-import { FoodAnalysis } from './pages/FoodAnalysis';
+import { FoodAnalysis } from './FoodAnalysis';
 import { NutritionPlan } from './pages/NutritionPlan';
 
 function App() {
