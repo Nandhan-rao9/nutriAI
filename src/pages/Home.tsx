@@ -88,7 +88,8 @@ export const Home = () => {
               </motion.p>
             </FeatureCard>
 
-            <FeatureCard to="/food-analysis" delay={0.4}>
+            
+            <FeatureCard to="http://localhost:5174/dashboard" delay={0.4}>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -113,6 +114,7 @@ export const Home = () => {
                 Upload food photos for instant nutritional information
               </motion.p>
             </FeatureCard>
+            
 
             <FeatureCard to="/chat" delay={0.6}>
               <motion.div
